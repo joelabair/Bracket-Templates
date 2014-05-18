@@ -1,0 +1,28 @@
+{
+  "name": "Bracket-Templates",
+  "version": "0.0.1",
+  "description": "Dead simple JavaScript templates using square brackets.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "devDependencies": {
+    "chai": "*",
+    "mocha": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/joelabair/Bracket-Templates.git"
+  },
+  "keywords": [
+    "template",
+    "brackets",
+    "bracket",
+    "templats"
+  ],
+  "author": "joel.a.bair@gmail.com",
+  "license": "GPLv2",
+  "bugs": {
+    "url": "https://github.com/joelabair/Bracket-Templates/issues"
+  }
+}
