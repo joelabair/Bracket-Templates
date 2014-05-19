@@ -8,6 +8,11 @@ Dead simple JavaScript templates using square brackets.
 
 Object.render(content, dataObj[, options, callback])
 
+ * content - Can be either a String or a Buffer.
+ * dataObj - Must be a simple shallow object.
+ * options - If present, must be an obejct. Default = { prefix: "object" }
+ * callback - If present, must be a function.
+
 
 ###Template Syntax:
 
