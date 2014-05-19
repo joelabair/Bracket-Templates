@@ -8,20 +8,26 @@
 var util = require('util');
 
 var defaults = {
-    prefix:     "object"
+    prefix: "object"
 };
 
 
 var renderData = function renderData(textString, prefix, data) {
     var pattern, replacer = function replacer(match, $1, $2){
-		var key = $1 || '$NO_KEY_NULL_KEY$'
-		key = key.trim();
-		var defaultValue = $2 || '';
-		defaultValue = defaultValue.trim();
-		return data[key] || data[key.replace(/[\-\_\.]/,' ')] || defaultValue;
+		var key = $1 || '$NO_KEY_NULL_KEY$', dataValue = '', defaultValue = $2 || '';
+		dataValue = data[key] || data[key.trim()] || data[key.replace(/[\-\_\.]/,' ')];
+		defaultValue = ($2 || '').trim();
+		if (typeof dataValue === 'object') {
+			return match;
+		}
+		return dataValue || defaultValue || match;
 	};
-    if(typeof prefix === 'string' && typeof data === 'object') {
-        pattern = new RegExp('\\[(?:\\s*'+prefix.trim()+'[\\.\\-\\_]([\\w\\-\\.]+)\\s*)(?:\\:([^\\[\\]]+))?\\]', 'g');
+    if(typeof data === 'object') {
+		if (prefix && typeof prefix === 'string') {
+			pattern = new RegExp('\\[(?:\\s*'+prefix.trim()+'[\\.\\-\\_]([\\w\\-\\.]+)\\s*)(?:\\:([^\\[\\]]+))?\\]', 'g');
+		} else {
+			pattern = new RegExp('\\[(?:\\s*([\\w\\-\\.]+)\\s*)(?:\\:([^\\[\\]]+))?\\]', 'g');
+		}
 		textString = textString.replace(pattern, replacer);
     }
 	return textString;
@@ -44,6 +50,8 @@ var renderData = function renderData(textString, prefix, data) {
 
 exports.render = function render(content, dataObj, options, callback) {
 
+	var textString = '', retBuffer = false;
+
 	if(arguments.length === 3 && typeof arguments[2] === 'function') {
 		callback = arguments[2];
 		options = false;
@@ -51,12 +59,17 @@ exports.render = function render(content, dataObj, options, callback) {
 
 	options = getDefaults(options);
 
-	var textString = '';
+	if (Buffer.isBuffer(content)) {
+		retBuffer = true;
+	}
 
 	if(content && dataObj) {
-		textString = String(content);
+		textString = renderData(String(content), options.prefix, dataObj);
 
-		textString = renderData(textString, options.prefix, dataObj);
+		if (retBuffer) {
+			// buffer in buffer out.
+			textString = new Buffer(textString);
+		}
 
 		if(callback) {
 			return callback(null, textString);

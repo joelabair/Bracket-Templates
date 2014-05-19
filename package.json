@@ -1,7 +1,7 @@
 {
   "name": "Bracket-Templates",
   "version": "0.0.1",
-  "description": "Dead simple JavaScript templates using square brackets.",
+  "description": "Dead simple text templates using square brackets - for JavaScript.",
   "main": "index.js",
   "scripts": {
     "test": "mocha"
@@ -18,7 +18,7 @@
     "template",
     "brackets",
     "bracket",
-    "templats"
+    "templates"
   ],
   "author": "joel.a.bair@gmail.com",
   "license": "GPLv2",
