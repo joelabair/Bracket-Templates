@@ -1,5 +1,5 @@
 {
-  "name": "tracket-templates",
+  "name": "bracket-templates",
   "version": "0.0.1",
   "description": "Dead simple text templates using square brackets - for JavaScript.",
   "main": "index.js",
