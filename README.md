@@ -6,7 +6,7 @@ Dead simple JavaScript templates using square brackets.
 
 ###Render Method:
 
-Object.remder(content, dataObj[, options, callback])
+Object.render(content, dataObj[, options, callback])
 
 
 ###Template Syntax:
