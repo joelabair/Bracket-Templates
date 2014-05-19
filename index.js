@@ -7,11 +7,20 @@
 
 var util = require('util');
 
+// todo: support a map of prefix names to object properties
 var defaults = {
     prefix: "object"
 };
 
 
+/**
+ *  Text tag renderer
+ *
+ *  @param {String} 	textString 	The template string.
+ *  @param {String}  	prefix 			The tag prefix if any.
+ *  @param {Object} 	data 			The source keys and values as an object.
+ *  @returns {String}
+ */
 var renderData = function renderData(textString, prefix, data) {
     var pattern, replacer = function replacer(match, $1, $2){
 		var key = $1 || '$NO_KEY_NULL_KEY$', dataValue = '', defaultValue = $2 || '';
@@ -34,7 +43,13 @@ var renderData = function renderData(textString, prefix, data) {
 };
 
 
- var getDefaults = function getDefaults(options) {
+/**
+ *  Return options inheriting form the module defaults.
+ *
+ *  @param {Object} 	options 	Custom options passed in.
+ *  @returns {Object}
+ */
+ var getOptions = function getOptions(options) {
 	var obj = Object.create(defaults);
 	for ( var prop in defaults ) {
 		if ( defaults.hasOwnProperty(prop) ) {
@@ -48,6 +63,15 @@ var renderData = function renderData(textString, prefix, data) {
 };
 
 
+/**
+ *  Render a square bracket text template.
+ *
+ *  @param {String|Buffer} 	content	Template as a string or buffer object.
+ *  @param {Objet} 			dataObj 	The data as an object in key, value format.
+ *  @param {Object} 			options 	*optional* - Default { prefix: "object" }.
+ *  @param {Function} 		callback	*optional* - A callback finction to call.
+ *  @returns {String|Buffer}
+ */
 exports.render = function render(content, dataObj, options, callback) {
 
 	var textString = '', retBuffer = false;
@@ -57,7 +81,7 @@ exports.render = function render(content, dataObj, options, callback) {
 		options = false;
 	}
 
-	options = getDefaults(options);
+	options = getOptions(options);
 
 	if (Buffer.isBuffer(content)) {
 		retBuffer = true;
