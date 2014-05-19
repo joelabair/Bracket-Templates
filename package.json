@@ -1,6 +1,6 @@
 {
   "name": "bracket-templates",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Dead simple text templates using square brackets - for JavaScript.",
   "main": "index.js",
   "scripts": {
