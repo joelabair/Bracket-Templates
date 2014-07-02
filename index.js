@@ -96,13 +96,14 @@ var processBlocks = function processBlocks(textString, options, data) {
 		var out = '',
 			pattern,
 			dataValue,
-			key = String($2 || '').trim(),
-			blockText = String($3).replace(/^(?:\r|\n|\r\n|\n)/, '');
+			type = String($2),
+			key = String($3 || '').trim(),
+			blockText = String($4).replace(/^(?:\r|\n|\r\n|\n)/, '');
 
 		dataValue = _extract(key, data);
 
 		var obj = {}, proto = {}, KEY;
-		if (typeof dataValue === 'object') {
+		if (typeof dataValue === 'object' && type === '#') {
 			for(KEY in dataValue) {
 				obj = {}, proto = {};
 				proto.KEY = proto.INDEX = KEY;
@@ -114,10 +115,18 @@ var processBlocks = function processBlocks(textString, options, data) {
 				}
 				out += renderData(blockText, false, obj);
 			}
-		} else if (dataValue) {
+		} else if (dataValue && type === '&') {
 			// block logical truthy
 			proto.KEY = proto.INDEX = key;
-			obj[key] = proto.VALUE = dataValue;
+			proto.VALUE = Boolean(dataValue);
+			obj = data;
+			obj.__proto__ = proto;
+			out += renderData(blockText, false, obj);
+		} else if (!dataValue && type === '!&') {
+			// block logical falsy
+			proto.KEY = proto.INDEX = key;
+			proto.VALUE = Boolean(dataValue);
+			obj = data;
 			obj.__proto__ = proto;
 			out += renderData(blockText, false, obj);
 		}
@@ -126,9 +135,9 @@ var processBlocks = function processBlocks(textString, options, data) {
 
 	if(typeof data === 'object' && data !== null) {
 		if (options && typeof options === 'object' && options.prefix) {
-			pattern = new RegExp('(\\[\\s*\\#'+rxquote(String(options.prefix))+'[\\.\\-\\_]([\\w\\.\\-\\_]+)\\s*\\])([\\s\\S]*?)(\\[\\s*\\/'+rxquote(String(options.prefix))+'[\\.\\-\\_]\\2\\s*\\])', 'mg');
+			pattern = new RegExp('(\\[\\s*(&|!&|#)'+rxquote(String(options.prefix))+'[\\.\\-\\_]([\\w\\.\\-\\_]+)\\s*\\])([\\s\\S]*?)(\\[\\s*\\/'+rxquote(String(options.prefix))+'[\\.\\-\\_]\\3\\s*\\])', 'mg');
 		} else {
-			pattern = new RegExp('(\\[\\s*\\#([\\w\\.\\-\\_]+)\\s*\\])([\\s\\S]*?)(\\[\\s*\\/\\2\\s*\\])', 'mg');
+			pattern = new RegExp('(\\[\\s*(&|!&|#)([\\w\\.\\-\\_]+)\\s*\\])([\\s\\S]*?)(\\[\\s*\\/\\3\\s*\\])', 'mg');
 		}
 		textString = textString.replace(pattern, replacer);
 	}
@@ -153,6 +162,11 @@ var renderData = function renderData(textString, options, data) {
 			key = String($1 || '').trim(),
 			defaultValue = String($2 || '').trim();
 
+		// literal bracket excaping via \[ text ]
+		if(match.substr(0, 1) === "\\") {
+			return match.substr(1);
+		}
+
 		dataValue = _extract(key, data);
 
 		return !Number.isNaN(dataValue) ? dataValue : defaultValue;
@@ -160,9 +174,9 @@ var renderData = function renderData(textString, options, data) {
 
 	if(typeof data === 'object'  && data !== null) {
 		if (options && typeof options === 'object' && options.prefix) {
-			pattern = new RegExp('\\[(?:\\s*'+rxquote(String(options.prefix))+'[\\.\\-\\_]([\\w\\-\\.]+)\\s*)(?:\\:([^\\[\\]]+))?\\]', 'g');
+			pattern = new RegExp('\\\\?\\[(?:\\s*'+rxquote(String(options.prefix))+'[\\.\\-\\_]([\\w\\-\\.]+)\\s*)(?:\\:([^\\[\\]]+))?\\]', 'g');
 		} else {
-			pattern = new RegExp('\\[(?:\\s*([\\w\\-\\.]+)\\s*)(?:\\:([^\\[\\]]+))?\\]', 'g');
+			pattern = new RegExp('\\\\?\\[(?:\\s*([\\w\\-\\.]+)\\s*)(?:\\:([^\\[\\]]+))?\\]', 'g');
 		}
 		textString = textString.replace(pattern, replacer);
 	} else {
@@ -219,6 +233,8 @@ exports.render = function render(content, dataObj, options, callback) {
 		try {
 			textString = processBlocks(textString, options, dataObj);
 			textString = renderData(textString, options, dataObj);
+			// clean any uncaught bracket-escape sequences
+			textString = textString.replace(/\\\[(.*?)\\?\]/g, "[$1]");
 		} catch (err) {
 			if (options && typeof options === 'object' && options.debug) console.warn(err);
 		}

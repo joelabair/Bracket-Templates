@@ -1,12 +1,13 @@
 
 Testing conditional blocks.
 
-[ #display ]
-Are you [ VALUE ]?
+[ &display ]
+Are you [ display ]?
+[ KEY ] was [ VALUE ]
 [ /display ]
 
-don's show -> [ #test ] toodles [ /test ]
+[ !&missing ] show this when falsy [ /missing ]
 
-[ #iftrue ]
-this was [ VALUE ]
+[ &iftrue ]
+[KEY] was [ VALUE ]
 [ /iftrue ]

@@ -2,7 +2,8 @@
 Testing conditional blocks.
 
 Are you Davey Jones?
+display was true
 
-don's show -> 
+ show this when falsy 
 
-this was true
+iftrue was true

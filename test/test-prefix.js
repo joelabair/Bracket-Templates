@@ -17,6 +17,28 @@ describe('Bracket Template (w/ prefix):', function(){
 	});
 
 
+	it('fails gracefully', function(){
+		var ret = null;
+		ret = bTemplate.render();
+		expect(ret).to.be.null;
+
+		ret = bTemplate.render(function(){});
+		expect(ret).to.be.null;
+
+		ret = bTemplate.render(function(){}, {});
+		expect(ret).to.be.null;
+
+		ret = bTemplate.render("test");
+		expect(ret).to.be.a.string;
+
+		ret = bTemplate.render(0,1);
+		expect(ret).to.be.null;
+
+		ret = bTemplate.render("test", 1);
+		expect(ret).to.be.a.string;
+	});
+
+
 	it('renders some basic text', function(){
 		var string = "[ object-name : default ] template-string";
 		var data = {
@@ -28,6 +50,20 @@ describe('Bracket Template (w/ prefix):', function(){
 		should.exist(string);
 		expect(string).to.be.a('string');
 		expect(string).to.equal('bracket template-string');
+	});
+
+
+	it('renders some basic text and bracket escapes', function(){
+		var string = "[ object-name : default ] \\[ template-string ] \\[ #example \\]";
+		var data = {
+			name: "bracket"
+		};
+
+		string = bTemplate.render(string, data);
+
+		should.exist(string);
+		expect(string).to.be.a('string');
+		expect(string).to.equal('bracket [ template-string ] [ #example ]');
 	});
 
 
@@ -103,4 +139,5 @@ describe('Bracket Template (w/ prefix):', function(){
 		buffer = bTemplate.render(buffer, data);
 		expect(String(buffer)).to.equal(String(finalBuff));
 	});
+
 });
