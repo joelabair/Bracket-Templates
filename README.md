@@ -30,7 +30,6 @@ Template placeholders representing property names and/or any nested key via dot 
 ###Examples:
 
 A basic template.
-
 ```text
 [ firstName : Joe ] [ lastName : Somebody ]
 [ streetAddress ]
@@ -40,6 +39,33 @@ A basic template.
 A templalte using the prefix 'object'.
 ```text
 Hello [ object-name ]
+```
+
+A template using sub-key notation with a default. (alternately, hyphens and underscores are supported)
+```
+Hello [ company.employees.0.name | mindless worker ].
+```
+
+An iterator block using sub-key notation.
+```
+Employees: 
+[ #company.employees ]
+  name: [ name ]
+[ /company.employees ]
+```
+
+An object iterator.
+```
+[ #properties ]
+  [KEY]: [VALUE]
+[ /properties ]
+```
+
+A conditional block.
+```
+[ #taxable ]
+  [ VALUE ]
+[ /taxable ]
 ```
 
 ####Rendering a template:
@@ -57,6 +83,5 @@ In the last example, would return the rendered string "Hello World. I like green
 
 Whitespace inside a placeholder is generally ignored, but preserved inside the context of the defaultValue.  Both tags
 `[name:default]` and `[ name : default ]` are equivalent.
-
 
 
