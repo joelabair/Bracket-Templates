@@ -1,13 +1,13 @@
 {
   "name": "bracket-templates",
-  "version": "0.0.2",
-  "description": "Dead simple text templates using square brackets - for JavaScript.",
+  "version": "0.0.3",
+  "description": "Minimal javascript templating using square brackets.",
   "main": "index.js",
   "scripts": {
     "test": "mocha"
   },
   "dependencies": {
-    "regexp-quote": "*"
+    "regexp-quote": "~0.0.0"
   },
   "devDependencies": {
     "chai": "*",
