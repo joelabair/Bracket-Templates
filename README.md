@@ -4,22 +4,6 @@ Bracket-Templates
 A mimimal JavaScript template engine using square brackets, supporting default strings, sub-key notation, block iterators and truthy conditional logic.   
 
 
-###Options:
-Object.options 
-* *prefix* - (default = none), an optional placeholder prefix string.
-* *debug* - (default = false), enable debug messages on the console.
-
-
-###Render Method:
-
-Object.render(template, dataObj[, options, callback])
-
- * template - Can be either a String or a Buffer.
- * dataObj - Any javascript Object or Array.
- * options - Local options obejct. Default = { prefix: "object" }
- * callback - A callback function.
-
-
 ###Template Syntax:
 
 Template placeholders are enclosed by square brackets (obviously), and represent data object property names and/or any nested key identifiers (via dot, hyphen, or undersocre  notation). Optionally, a default value can be included by adding a colon followed by the default string.  Tempalte placeholders support both truthy conditional blocks and list/dict iterator blocks. Additionally, tempalte placeholders may contain an optional prefix.   
@@ -34,9 +18,10 @@ Special placeholder names:
 
 A basic template.
 ```text
-[ firstName : Joe ] [ lastName : Somebody ]
-[ streetAddress ]
+[ name : Joe Somebody ]
+[ address ]
 [ city ], [state]  [zip]
+[ phone ]
 ```
 
 A templalte using the prefix 'object'.
@@ -82,6 +67,22 @@ Escaping some literal bracket text.
 ```
 Example: \[ property ] would render [ VALUE ]
 ```
+
+###Options:
+Object.options 
+* *prefix* - (default = none), an optional placeholder prefix string.
+* *debug* - (default = false), enable debug messages on the console.
+
+
+###Render Method:
+
+Object.render(template, dataObj[, options, callback])
+
+ * template - Can be either a String or a Buffer.
+ * dataObj - Any javascript Object or Array.
+ * options - Local options obejct. Default = { prefix: "object" }
+ * callback - A callback function.
+
 
 ####Rendering a template:
 
