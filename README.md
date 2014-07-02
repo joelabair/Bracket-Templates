@@ -57,7 +57,7 @@ Employees:
 An object iterator.
 ```
 [ #properties ]
-  [KEY]: [VALUE]
+  [ KEY ]: [ VALUE ]
 [ /properties ]
 ```
 
