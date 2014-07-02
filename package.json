@@ -6,6 +6,9 @@
   "scripts": {
     "test": "mocha"
   },
+  "dependencies": {
+    "regexp-quote": "*"
+  },
   "devDependencies": {
     "chai": "*",
     "mocha": "*"
@@ -16,7 +19,7 @@
   },
   "keywords": [
     "template",
-	"square brackets",
+    "square brackets",
     "brackets",
     "bracket",
     "templates"

@@ -2,14 +2,138 @@
 /**
  *   Bracket Text templete renderer
  *
- *   Template Syntax:   [ {prefix}-_.{property} : {default} ]
+ *   Template Syntax:   [ [{prefix}-_.]{propertyName} : {default} ]
  */
 
 var util = require('util');
+var rxquote = require("regexp-quote");
 
-// todo: support a map of prefix names to object properties
-var defaults = {
-    prefix: "object"
+
+var _defaults = {
+	debug:	false,	// warning messages
+	prefix:	"" 		// any string placeholder prefix (i.e. "object")
+};
+
+var _options = Object.create(_defaults);
+_options = util._extend(_options, _defaults);
+
+/*
+ * Export the _options prototype forcing the object type on set.
+ */
+Object.defineProperty(module.exports, 'options', {
+	enumerable: true,
+	set: function(obj) {
+		if (obj === null) {
+			_options = Object.create(_defaults);
+			_options = util._extend(_options, _defaults);
+			return _options;
+		}
+		if (obj instanceof Array) {
+			return _options;
+		}
+		return util._extend(_options, obj);
+	},
+	get: function() {
+		return _options;
+	}
+});
+
+
+/**
+ *  key notation value extraction
+ *
+ *  @param {String} 	keyStr 			The key string, including sub-key notation (i.e. this.prop.key or thing-prop).
+ *  @param {Object} 	dataObj 		The data object an array or object.
+ *  @returns {Mixed}
+ */
+var _extract = function _extract(keyStr, dataObj) {
+	var altkey,
+		_subKey,
+		_found = false,
+		dataValue = dataObj,
+		keyNotation = keyStr.split(/[\-\_\.]/);
+
+	if (dataValue && typeof dataValue === 'object') {
+
+		while(keyNotation.length) {
+			_subKey = keyNotation.shift();
+			if (_subKey in dataValue) {
+				dataValue = dataValue[_subKey];
+				_found = true;
+			} else {
+				dataValue = null;
+				keyNotation.length = 0;
+				_found = false;
+			}
+		}
+
+		if (!_found) {
+			// alternate support for delimiters in place of spaces as a key
+			altkey = keyStr.replace(/[\-\_\.]/,' ');
+			if (altkey in dataObj) {
+				dataValue = dataObj[altkey];
+				_found = true;
+			}
+		}
+
+	}
+
+	return _found ? dataValue : NaN;
+};
+
+
+/**
+ *  Text block renderer
+ *
+ *  @param {String} 	textString 	The template string.
+ *  @param {Object} 	options 		The current options config.
+ *  @param {Object} 	data 			The source keys and values as an object.
+ *  @returns {String}
+ */
+var processBlocks = function processBlocks(textString, options, data) {
+
+	var replacer = function replacer(match, $1, $2, $3, $4) {
+		var out = '',
+			pattern,
+			dataValue,
+			key = String($2 || '').trim(),
+			blockText = String($3).replace(/^(?:\r|\n|\r\n|\n)/, '');
+
+		dataValue = _extract(key, data);
+
+		var obj = {}, proto = {}, KEY;
+		if (typeof dataValue === 'object') {
+			for(KEY in dataValue) {
+				obj = {}, proto = {};
+				proto.KEY = proto.INDEX = KEY;
+				obj[KEY] = proto.VALUE = dataValue[KEY];
+				obj.__proto__ = proto;
+				if (typeof dataValue[KEY] === 'object' && !isNaN(parseInt(KEY))) {
+					obj = dataValue[KEY];
+					obj.__proto__ = proto;
+				}
+				out += renderData(blockText, false, obj);
+			}
+		} else if (dataValue) {
+			// block logical truthy
+			proto.KEY = proto.INDEX = key;
+			obj[key] = proto.VALUE = dataValue;
+			obj.__proto__ = proto;
+			out += renderData(blockText, false, obj);
+		}
+		return out.replace(/(?:\r|\n|\r\n)$/, '');
+	};
+
+	if(typeof data === 'object' && data !== null) {
+		if (options && typeof options === 'object' && options.prefix) {
+			pattern = new RegExp('(\\[\\s*\\#'+rxquote(String(options.prefix))+'[\\.\\-\\_]([\\w\\.\\-\\_]+)\\s*\\])([\\s\\S]*?)(\\[\\s*\\/'+rxquote(String(options.prefix))+'[\\.\\-\\_]\\2\\s*\\])', 'mg');
+		} else {
+			pattern = new RegExp('(\\[\\s*\\#([\\w\\.\\-\\_]+)\\s*\\])([\\s\\S]*?)(\\[\\s*\\/\\2\\s*\\])', 'mg');
+		}
+		textString = textString.replace(pattern, replacer);
+	}
+
+	return textString;
 };
 
 
@@ -17,28 +141,34 @@ var defaults = {
  *  Text tag renderer
  *
  *  @param {String} 	textString 	The template string.
- *  @param {String}  	prefix 			The tag prefix if any.
+ *  @param {Object} 	options 		The current options config.
  *  @param {Object} 	data 			The source keys and values as an object.
  *  @returns {String}
  */
-var renderData = function renderData(textString, prefix, data) {
-    var pattern, replacer = function replacer(match, $1, $2){
-		var key = $1 || '$NO_KEY_NULL_KEY$', dataValue = '', defaultValue = $2 || '';
-		dataValue = data[key] || data[key.trim()] || data[key.replace(/[\-\_\.]/,' ')];
-		defaultValue = ($2 || '').trim();
-		if (typeof dataValue === 'object') {
-			return match;
-		}
-		return dataValue || defaultValue || match;
+var renderData = function renderData(textString, options, data) {
+
+	var replacer = function replacer(match, $1, $2) {
+		var pattern,
+			dataValue,
+			key = String($1 || '').trim(),
+			defaultValue = String($2 || '').trim();
+
+		dataValue = _extract(key, data);
+
+		return !Number.isNaN(dataValue) ? dataValue : defaultValue;
 	};
-    if(typeof data === 'object') {
-		if (prefix && typeof prefix === 'string') {
-			pattern = new RegExp('\\[(?:\\s*'+prefix.trim()+'[\\.\\-\\_]([\\w\\-\\.]+)\\s*)(?:\\:([^\\[\\]]+))?\\]', 'g');
+
+	if(typeof data === 'object'  && data !== null) {
+		if (options && typeof options === 'object' && options.prefix) {
+			pattern = new RegExp('\\[(?:\\s*'+rxquote(String(options.prefix))+'[\\.\\-\\_]([\\w\\-\\.]+)\\s*)(?:\\:([^\\[\\]]+))?\\]', 'g');
 		} else {
 			pattern = new RegExp('\\[(?:\\s*([\\w\\-\\.]+)\\s*)(?:\\:([^\\[\\]]+))?\\]', 'g');
 		}
 		textString = textString.replace(pattern, replacer);
-    }
+	} else {
+		throw new Error('No data to render!');
+	}
+
 	return textString;
 };
 
@@ -49,16 +179,9 @@ var renderData = function renderData(textString, prefix, data) {
  *  @param {Object} 	options 	Custom options passed in.
  *  @returns {Object}
  */
- var getOptions = function getOptions(options) {
-	var obj = Object.create(defaults);
-	for ( var prop in defaults ) {
-		if ( defaults.hasOwnProperty(prop) ) {
-			Object.defineProperty(obj, prop, Object.getOwnPropertyDescriptor(defaults, prop));
-		}
-	}
-	if ( typeof options === 'object' ) {
-		obj = util._extend(obj, options);
-	}
+var getOptions = function getOptions(opts) {
+	var obj = Object.create(_options);
+	obj = util._extend(obj, opts);
 	return obj;
 };
 
@@ -66,15 +189,15 @@ var renderData = function renderData(textString, prefix, data) {
 /**
  *  Render a square bracket text template.
  *
- *  @param {String|Buffer} 	content	Template as a string or buffer object.
- *  @param {Objet} 			dataObj 	The data as an object in key, value format.
- *  @param {Object} 			options 	*optional* - Default { prefix: "object" }.
- *  @param {Function} 		callback	*optional* - A callback finction to call.
+ *  @param {String|Buffer}		content	Template as a string or buffer object.
+ *  @param {Objet} 				dataObj 	The data as an object in key, value format.
+ *  @param {Object} 				options 	*optional* - Default { debug: fasle, prefix: "object" }.
+ *  @param {Function} 			callback	*optional* - A callback finction to call.
  *  @returns {String|Buffer}
  */
 exports.render = function render(content, dataObj, options, callback) {
 
-	var textString = '', retBuffer = false;
+	var textString = '', retBuffer = false, retString = false, err=null;
 
 	if(arguments.length === 3 && typeof arguments[2] === 'function') {
 		callback = arguments[2];
@@ -83,12 +206,22 @@ exports.render = function render(content, dataObj, options, callback) {
 
 	options = getOptions(options);
 
+	if (typeof content === 'string') {
+		retString = true;
+	}
+
 	if (Buffer.isBuffer(content)) {
 		retBuffer = true;
 	}
 
-	if(content && dataObj) {
-		textString = renderData(String(content), options.prefix, dataObj);
+	if(retString || retBuffer) {
+		textString = String(content);
+		try {
+			textString = processBlocks(textString, options, dataObj);
+			textString = renderData(textString, options, dataObj);
+		} catch (err) {
+			if (options && typeof options === 'object' && options.debug) console.warn(err);
+		}
 
 		if (retBuffer) {
 			// buffer in buffer out.
@@ -96,14 +229,16 @@ exports.render = function render(content, dataObj, options, callback) {
 		}
 
 		if(callback) {
-			return callback(null, textString);
+			return callback(err, textString);
 		}
 		return textString;
 	} else {
+		err = new Error('No template to render!');
 		if(callback) {
-			return callback(null, content);
+			return callback(err, null);
 		}
-		return content;
+		if (options && typeof options === 'object' && options.debug) console.warn(err);
+		return null;
 	}
 
 };

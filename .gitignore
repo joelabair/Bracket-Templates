@@ -3,6 +3,8 @@ lib-cov
 *.out
 *.pid
 *.gz
+*.komodoproject
+*.sublime-*
 
 pids
 logs
