@@ -43,7 +43,7 @@ Hello [ object-name ]
 
 A template using sub-key notation with a default. (alternately, hyphens and underscores are supported)
 ```
-Hello [ company.employees.0.name | mindless worker ].
+Hello [ company.employees.0.name : mindless worker ].
 ```
 
 An iterator block using sub-key notation.
