@@ -1,0 +1,12 @@
+
+Testing conditional blocks.
+
+[ #display ]
+Are you [ VALUE ]?
+[ /display ]
+
+don's show -> [ #test ] toodles [ /test ]
+
+[ #iftrue ]
+this was [ VALUE ]
+[ /iftrue ]
