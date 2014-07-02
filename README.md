@@ -61,7 +61,7 @@ An object iterator.
 [ /properties ]
 ```
 
-A conditional block.
+A truthy conditional block.
 ```
 [ #taxable ]
   [ VALUE ]
