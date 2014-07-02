@@ -1,7 +1,13 @@
 Bracket-Templates
 =================
 
-Dead simple JavaScript templates using square brackets. 
+A mimimal JavaScript template engine using square brackets w/ defaults.   
+
+
+###Options:
+Object.options 
+* *prefix* - (default = none), an optional placeholder prefix string.
+* *debug* - (default = false), enable debug messages on the console.
 
 
 ###Render Method:
@@ -9,16 +15,16 @@ Dead simple JavaScript templates using square brackets.
 Object.render(content, dataObj[, options, callback])
 
  * content - Can be either a String or a Buffer.
- * dataObj - Must be a simple shallow object.
- * options - If present, must be an obejct. Default = { prefix: "object" }
- * callback - If present, must be a function.
+ * dataObj - Any javascript Object or Array.
+ * options - Local options obejct. Default = { prefix: "object" }
+ * callback - A callback function.
 
 
 ###Template Syntax:
 
-Template tags are enclosed by square brackets (obviously), and contain a prefix (default=object) followed by a hyphen, underscore or period, and a property name. Optionally, a default value can be specified by adding a colon followed by the default stringto the tag.  
+Template placeholders representing property names and/or any nested key via dot notation are enclosed by square brackets (obviously), and may contain an optional prefix. Optionally, a default value can be included by adding a colon followed by the default string.  Tempalte placeholders support both truthy conditional blocks and list/dict iterator blocks.   
 
-**[** {prefix}[_-.]{propertyName} [: {defaultValue}] **]**
+**[** {propertyName} [: {defaultValue}] **]**
 
 
 ###Examples:
@@ -26,36 +32,37 @@ Template tags are enclosed by square brackets (obviously), and contain a prefix 
 A basic template.
 
 ```text
-[ object-firstName ] [ object-lastName ]
-[ object-streetAddress ]
-[ object-city ], [object-state]  [object-zip]
+[ firstName : Joe ] [ lastName : Somebody ]
+[ streetAddress ]
+[ city ], [state]  [zip]
 ```
 
-A templalte with defaults.
+A templalte using the prefix 'object'.
 ```text
-Hello [ object-name : World ]!
+Hello [ object-name ]
 ```
 
-rendering a template
+####Rendering a template:
 
 ```javascript
 var bTemplate = require('bracket-templates');
 var data = {
-  name: "World"
+  thing: "World"
 };
 
-var out = bTemplate.render('Hello [object-name]. Favorite color is [ object-color : green ].', data);
+var out = bTemplate.render('Hello [thing]. My favorite color is [ color : green ].', data);
 ```
 
-In the last example, out would countain the rendered string "Hello World. Favorite color is green."  Since there is no property "color" in the data object, the default value is used.
+In the last example, would return the rendered string "Hello World. Favorite color is green."  Since there is no property "color" in the data object, the default value is used.
 
 Whitspace inside the tag is generally ignored, but preserved inside the context of the defaultValue.  Both tags
 
-    [object-name:default]
+    [name:default]
 
 and
 
-    [ object-name : default ]
+    [ name : default ]
 
 are equivalent.
     
+
