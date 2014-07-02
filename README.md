@@ -39,7 +39,7 @@ Hello [ object-name : World ]!
 rendering a template
 
 ```javascript
-var bTemplate = require('Bracket-Templates');
+var bTemplate = require('bracket-templates');
 var data = {
   name: "World"
 };
