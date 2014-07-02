@@ -1,7 +1,7 @@
 Bracket-Templates
 =================
 
-A mimimal JavaScript template engine using square brackets w/ defaults.   
+A mimimal JavaScript template engine using square brackets, supporting default strings, sub-key notation, block iterators and conditional logic.   
 
 
 ###Options:
