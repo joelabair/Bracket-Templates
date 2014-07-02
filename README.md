@@ -12,9 +12,9 @@ Object.options
 
 ###Render Method:
 
-Object.render(content, dataObj[, options, callback])
+Object.render(template, dataObj[, options, callback])
 
- * content - Can be either a String or a Buffer.
+ * template - Can be either a String or a Buffer.
  * dataObj - Any javascript Object or Array.
  * options - Local options obejct. Default = { prefix: "object" }
  * callback - A callback function.
@@ -45,24 +45,18 @@ Hello [ object-name ]
 ####Rendering a template:
 
 ```javascript
-var bTemplate = require('bracket-templates');
+var tmpl = require('bracket-templates');
 var data = {
   thing: "World"
 };
 
-var out = bTemplate.render('Hello [thing]. My favorite color is [ color : green ].', data);
+var out = tmpl.render('Hello [thing]. I like [ color : green ].', data);
 ```
 
-In the last example, would return the rendered string "Hello World. Favorite color is green."  Since there is no property "color" in the data object, the default value is used.
+In the last example, would return the rendered string "Hello World. I like green."  Since there is no property "color" in the data object, the default value is used.
 
-Whitspace inside the tag is generally ignored, but preserved inside the context of the defaultValue.  Both tags
+Whitespace inside a placeholder is generally ignored, but preserved inside the context of the defaultValue.  Both tags
+`[name:default]` and `[ name : default ]` are equivalent.
 
-    [name:default]
 
-and
-
-    [ name : default ]
-
-are equivalent.
-    
 
