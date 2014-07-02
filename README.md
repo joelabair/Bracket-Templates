@@ -1,7 +1,7 @@
 Bracket-Templates
 =================
 
-A mimimal JavaScript template engine using square brackets, supporting default strings, sub-key notation, block iterators and conditional logic.   
+A mimimal JavaScript template engine using square brackets, supporting default strings, sub-key notation, block iterators and truthy conditional logic.   
 
 
 ###Options:
@@ -22,7 +22,7 @@ Object.render(template, dataObj[, options, callback])
 
 ###Template Syntax:
 
-Template placeholders representing property names and/or any nested key via dot notation are enclosed by square brackets (obviously), and may contain an optional prefix. Optionally, a default value can be included by adding a colon followed by the default string.  Tempalte placeholders support both truthy conditional blocks and list/dict iterator blocks.   
+Template placeholders are enclosed by square brackets (obviously), and represent data object property names and/or any nested key identifiers (via dot, hyphen, or undersocre  notation). Optionally, a default value can be included by adding a colon followed by the default string.  Tempalte placeholders support both truthy conditional blocks and list/dict iterator blocks. Additionally, tempalte placeholders may contain an optional prefix.   
 
 **[** {propertyName} [: {defaultValue}] **]**
 
