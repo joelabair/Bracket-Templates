@@ -26,6 +26,9 @@ Template placeholders are enclosed by square brackets (obviously), and represent
 
 **[** {propertyName} [: {defaultValue}] **]**
 
+Special placeholder names:
+* KEY/INDEX - the current property name or index in a iterator.  In a logical block this is the logical key name.
+* VALUE - The current property or item value in an iterator. In a logical block this is the boolean value.
 
 ###Examples:
 
@@ -63,9 +66,21 @@ An object iterator.
 
 A truthy conditional block.
 ```
-[ #taxable ]
-  [ VALUE ]
+[ &taxable ]
+  Please cut off your leg.
 [ /taxable ]
+```
+
+A falsy conditional block.
+```
+[ &taxable ]
+  Aren't you lucky!
+[ /taxable ]
+```
+
+Escaping some literal bracket text.
+```
+Example: \[ property ] would render [ VALUE ]
 ```
 
 ####Rendering a template:
