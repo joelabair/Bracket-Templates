@@ -55,12 +55,19 @@ var _extract = function _extract(keyStr, dataObj) {
 
 	if (dataValue && typeof dataValue === 'object') {
 
+		if (keyStr in dataValue) {
+			dataValue = dataValue[keyStr];
+			keyNotation.length = 0;
+			_found = true;
+		}
+
 		while(keyNotation.length) {
 			_subKey = keyNotation.shift();
 			if (_subKey in dataValue) {
 				dataValue = dataValue[_subKey];
 				_found = true;
 			} else {
+				// bail on any level miss
 				dataValue = null;
 				keyNotation.length = 0;
 				_found = false;
@@ -115,14 +122,14 @@ var processBlocks = function processBlocks(textString, options, data) {
 				}
 				out += renderData(blockText, false, obj);
 			}
-		} else if (dataValue && type === '&') {
+		} else if (dataValue && type === '~') {
 			// block logical truthy
 			proto.KEY = proto.INDEX = key;
 			proto.VALUE = Boolean(dataValue);
 			obj = data;
 			obj.__proto__ = proto;
 			out += renderData(blockText, false, obj);
-		} else if (!dataValue && type === '!&') {
+		} else if (!dataValue && (type === '^' || type === '!')) {
 			// block logical falsy
 			proto.KEY = proto.INDEX = key;
 			proto.VALUE = Boolean(dataValue);
@@ -135,9 +142,9 @@ var processBlocks = function processBlocks(textString, options, data) {
 
 	if(typeof data === 'object' && data !== null) {
 		if (options && typeof options === 'object' && options.prefix) {
-			pattern = new RegExp('(\\[\\s*(&|!&|#)'+rxquote(String(options.prefix))+'[\\.\\-\\_]([\\w\\.\\-\\_]+)\\s*\\])([\\s\\S]*?)(\\[\\s*\\/'+rxquote(String(options.prefix))+'[\\.\\-\\_]\\3\\s*\\])', 'mg');
+			pattern = new RegExp('(\\[\\s*(~|\\^|\\!|#)'+rxquote(String(options.prefix))+'[\\.\\-\\_]([\\w\\.\\-\\_]+)\\s*\\])([\\s\\S]*?)(\\[\\s*\\/'+rxquote(String(options.prefix))+'[\\.\\-\\_]\\3\\s*\\])', 'mg');
 		} else {
-			pattern = new RegExp('(\\[\\s*(&|!&|#)([\\w\\.\\-\\_]+)\\s*\\])([\\s\\S]*?)(\\[\\s*\\/\\3\\s*\\])', 'mg');
+			pattern = new RegExp('(\\[\\s*(~|\\^|\\!|#)([\\w\\.\\-\\_]+)\\s*\\])([\\s\\S]*?)(\\[\\s*\\/\\3\\s*\\])', 'mg');
 		}
 		textString = textString.replace(pattern, replacer);
 	}
