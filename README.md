@@ -26,10 +26,8 @@ bracket.render(template, dataObj[, options, callback])
  * options  - Local options obejct.
  * callback - A callback function.
 
-###Template Syntax:
+###Template Syntax: [ {propertyName} [: {defaultValue}] ]
 Template placeholders are enclosed by square brackets (obviously), and represent data object property names and/or any nested key identifiers (via dot, hyphen, or undersocre  notation). Optionally, a default value can be included by adding a colon followed by the default string.  Tempalte placeholders support both truthy conditional blocks and list/dict iterator blocks. Additionally, tempalte placeholders may contain an optional prefix.   
-
-###[ {propertyName} [: {defaultValue}] ]
 
 
 ###Special placeholder names:
