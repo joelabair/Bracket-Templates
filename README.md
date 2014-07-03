@@ -67,8 +67,8 @@ Whitespace inside tag brackets is generally ignored, but preserved inside the co
 
 
 ###Examples:
-=================
 
+<hr>
 **A basic template with some default text.**
 ```text
 [ name : Joe Somebody ]
@@ -86,8 +86,9 @@ var data = {
 };
 console.log( bracket.render( String(template), data ) );
 ```
-=================
 
+
+<hr>
 **A templalte using the optional prefix 'object'.**
 ```text
 Hello [ object-name ]
@@ -101,8 +102,9 @@ var data = {
 };
 console.log( bracket.render( String(template), data, {prefix: 'object'} ) );
 ```
-=================
 
+
+<hr>
 **A template using dot based sub-key notation (alternately, hyphens and underscores are supported)**
 ```
 Hello [ company.employees.0.name : mindless worker ].
@@ -120,8 +122,9 @@ var data = {
 };
 console.log( bracket.render( String(template), data ) );
 ```
-=================
 
+
+<hr>
 **An iterator block using sub-key notation.**
 ```
 Employees: 
@@ -144,8 +147,9 @@ var data = {
 };
 console.log( bracket.render( String(template), data ) );
 ```
-=================
 
+
+<hr>
 **An object iterator using specials.**
 ```
 [ #properties ]
@@ -164,8 +168,9 @@ var data = {
 };
 console.log( bracket.render( String(template), data ) );
 ```
-=================
 
+
+<hr>
 **A truthy conditional block.**
 ```
 [ ~taxable ]
@@ -181,8 +186,9 @@ var data = {
 };
 console.log( bracket.render( String(template), data ) );
 ```
-=================
 
+
+<hr>
 **A falsy conditional block.**
 ```
 [ ^taxable ]
@@ -201,8 +207,9 @@ var template = fs.readFileSync('./template.txt');
 var data = {};
 console.log( bracket.render( String(template), data ) );
 ```
-=================
 
+
+<hr>
 **A truthy conditional iterator block.**
 ```
 [ #taxable ]
@@ -220,8 +227,9 @@ var data = {
 };
 console.log( bracket.render( String(template), data ) );
 ```
-=================
 
+
+<hr>
 **Escaping some literal bracket text.**
 ```
 Example: \[ someName ] would render [ someName ]
