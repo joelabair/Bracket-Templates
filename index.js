@@ -50,10 +50,12 @@ var _extract = function _extract(keyStr, dataObj) {
 	var altkey,
 		_subKey,
 		_found = false,
-		dataValue = dataObj,
+		dataValue = null,
 		keyNotation = keyStr.split(/[\-\_\.]/);
 
-	if (dataValue && typeof dataValue === 'object') {
+	if (dataObj && typeof dataObj === 'object') {
+
+		dataValue = Object.create(dataObj)
 
 		if (keyStr in dataValue) {
 			dataValue = dataValue[keyStr];

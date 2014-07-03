@@ -166,4 +166,33 @@ describe('Bracket Template:', function(){
 
 		expect(String(buffer)).to.equal(String(finalBuff));
 	});
+
+	it('renders multiple complex sub-key text', function(){
+		var string = "[ foo.bar ] [ name ] [ stack_bar_baz ]";
+		var data = {
+			test: {
+				name: "bracket",
+				foo: {
+					bar: 'foo-bracket'
+				},
+				stack: {
+					bar: {
+						baz: 'bar-bracket'
+					}
+				}
+			}
+		};
+
+		string = bTemplate.render(string, data.test);
+
+		should.exist(string);
+		expect(string).to.be.a('string');
+		expect(string).to.equal('foo-bracket bracket bar-bracket');
+
+		string = bTemplate.render(string, data.test);
+
+		should.exist(string);
+		expect(string).to.be.a('string');
+		expect(string).to.equal('foo-bracket bracket bar-bracket');
+	});
 });
