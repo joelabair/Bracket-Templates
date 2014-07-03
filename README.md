@@ -18,8 +18,9 @@ bracket.options = {
 ```
 
 ###Render Method:
+```js
 bracket.render(template, dataObj[, options, callback])
-
+```
  * template - Can be either a String or a Buffer (string-in, string-out & buffer-in, buffer-out).
  * dataObj  - Any javascript Object or Array.
  * options  - Local options obejct.
