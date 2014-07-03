@@ -58,7 +58,7 @@ A truthy conditional block.
 
 A falsy conditional block.
 ```
-[ &taxable ]
+[ !&taxable ]
   Aren't you lucky!
 [ /taxable ]
 ```
