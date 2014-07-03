@@ -122,7 +122,7 @@ var processBlocks = function processBlocks(textString, options, data) {
 				}
 				out += renderData(blockText, false, obj);
 			}
-		} else if (dataValue && type === '~') {
+		} else if (dataValue && (type === '~' || type === '#')) {
 			// block logical truthy
 			proto.KEY = proto.INDEX = key;
 			proto.VALUE = Boolean(dataValue);
