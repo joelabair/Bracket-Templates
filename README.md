@@ -68,7 +68,8 @@ Whitespace inside tag brackets is generally ignored, but preserved inside the co
 
 ###Examples:
 
-<hr>
+----
+
 **A basic template with some default text.**
 ```text
 [ name : Joe Somebody ]
@@ -88,7 +89,8 @@ console.log( bracket.render( String(template), data ) );
 ```
 
 
-<hr>
+----
+
 **A templalte using the optional prefix 'object'.**
 ```text
 Hello [ object-name ]
@@ -104,7 +106,8 @@ console.log( bracket.render( String(template), data, {prefix: 'object'} ) );
 ```
 
 
-<hr>
+----
+
 **A template using dot based sub-key notation (alternately, hyphens and underscores are supported)**
 ```
 Hello [ company.employees.0.name : mindless worker ].
@@ -124,7 +127,8 @@ console.log( bracket.render( String(template), data ) );
 ```
 
 
-<hr>
+----
+
 **An iterator block using sub-key notation.**
 ```
 Employees: 
@@ -149,7 +153,8 @@ console.log( bracket.render( String(template), data ) );
 ```
 
 
-<hr>
+----
+
 **An object iterator using specials.**
 ```
 [ #properties ]
@@ -170,7 +175,8 @@ console.log( bracket.render( String(template), data ) );
 ```
 
 
-<hr>
+----
+
 **A truthy conditional block.**
 ```
 [ ~taxable ]
@@ -188,7 +194,8 @@ console.log( bracket.render( String(template), data ) );
 ```
 
 
-<hr>
+----
+
 **A falsy conditional block.**
 ```
 [ ^taxable ]
@@ -209,7 +216,8 @@ console.log( bracket.render( String(template), data ) );
 ```
 
 
-<hr>
+----
+
 **A truthy conditional iterator block.**
 ```
 [ #taxable ]
@@ -229,7 +237,8 @@ console.log( bracket.render( String(template), data ) );
 ```
 
 
-<hr>
+----
+
 **Escaping some literal bracket text.**
 ```
 Example: \[ someName ] would render [ someName ]
