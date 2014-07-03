@@ -29,7 +29,7 @@ bracket.render(template, dataObj[, options, callback])
 ###Template Syntax:
 Template placeholders are enclosed by square brackets (obviously), and represent data object property names and/or any nested key identifiers (via dot, hyphen, or undersocre  notation). Optionally, a default value can be included by adding a colon followed by the default string.  Tempalte placeholders support both truthy conditional blocks and list/dict iterator blocks. Additionally, tempalte placeholders may contain an optional prefix.   
 
-##[ {propertyName} [: {defaultValue}] ]
+###[ {propertyName} [: {defaultValue}] ]
 
 
 ###Special placeholder names:
@@ -52,7 +52,7 @@ Blocks begin with an opening tag and end with a closing tag, and may span multip
   * Render the block if the propertyName does not exists or is falsy.
 
 
-####Rendering a template:
+###Rendering a template:
 ```js
 var bracket = require('bracket-templates');
 var data = {
