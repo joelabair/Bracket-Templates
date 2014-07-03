@@ -1,7 +1,7 @@
 Bracket-Templates
 =================
 
-A mimimal JavaScript template engine using square brackets, supporting default strings, sub-key notation, block iterators and truthy conditional logic.   
+A mimimal JavaScript template engine inspired by [mustache](http://mustache.github.io/mustache.5.html) using square brackets, supporting default strings, sub-key notation, block iterators and truthy conditional logic.   
 
 
 ###Template Syntax:
@@ -16,7 +16,7 @@ Special placeholder names:
 
 ###Examples:
 
-A basic template.
+A basic template with default text.
 ```text
 [ name : Joe Somebody ]
 [ address ]
@@ -24,12 +24,12 @@ A basic template.
 [ phone ]
 ```
 
-A templalte using the prefix 'object'.
+A templalte using the optional prefix 'object'.
 ```text
 Hello [ object-name ]
 ```
 
-A template using sub-key notation with a default. (alternately, hyphens and underscores are supported)
+A template using dot based sub-key notation (alternately, hyphens and underscores are supported)
 ```
 Hello [ company.employees.0.name : mindless worker ].
 ```
@@ -51,22 +51,47 @@ An object iterator.
 
 A truthy conditional block.
 ```
-[ &taxable ]
+[ ~taxable ]
   Please cut off your leg.
 [ /taxable ]
 ```
 
 A falsy conditional block.
 ```
-[ !&taxable ]
+[ ^taxable ]
   Aren't you lucky!
 [ /taxable ]
+
+or
+
+You are [ !taxable ] not [ /taxable ] taxable.
+
+```
+
+A truthy conditional iterator block.
+```
+[ ~taxable ]
+  You owe [ taxRate : 100% ] of your monies. 
+[ /taxable ]
+```
+Requires the data object:
+```
+{
+  taxable: {
+    taxRate: '99%'
+  }
+}
 ```
 
 Escaping some literal bracket text.
 ```
-Example: \[ property ] would render [ VALUE ]
+Example: \[ someName ] would render [ VALUE ]
+
+Allternately \[ someName \] will render [ VALUE ] 
 ```
+
+###Iterator Blocks
+Iterators begin 
 
 ###Options:
 Object.options 
