@@ -38,7 +38,7 @@ Template placeholders are enclosed by square brackets (obviously), and represent
 
 ###Block Constructs
 Blocks begin with an opening tag and end with a closing tag, and may span multiple lines.  Opening block tags must contain on of the following prefixes preceeding the {propertyName}.
-* # (iterator block) 
+* \# (iterator block) 
   * If the propertyName represents an object or array, repeat the block with the value of each element.  Otherwise, repeat the block with the full object.
 
 * ~ (truthy block)
