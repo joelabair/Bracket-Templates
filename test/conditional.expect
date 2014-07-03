@@ -4,6 +4,6 @@ Testing conditional blocks.
 Are you Davey Jones?
 display was true
 
- show this when falsy 
+show this when falsy 
 
 iftrue was true

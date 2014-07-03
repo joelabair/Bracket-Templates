@@ -99,13 +99,13 @@ var _extract = function _extract(keyStr, dataObj) {
  */
 var processBlocks = function processBlocks(textString, options, data) {
 
-	var replacer = function replacer(match, $1, $2, $3, $4) {
+	var replacer = function replacer(match, $1, $2, $3, $4, $5) {
 		var out = '',
 			pattern,
 			dataValue,
 			type = String($2),
 			key = String($3 || '').trim(),
-			blockText = String($4).replace(/^(?:\r|\n|\r\n|\n)/, '');
+			blockText = String($5);//.replace(/(^\s|\s$)/g, '');
 
 		dataValue = _extract(key, data);
 
@@ -137,14 +137,14 @@ var processBlocks = function processBlocks(textString, options, data) {
 			obj.__proto__ = proto;
 			out += renderData(blockText, false, obj);
 		}
-		return out.replace(/(?:\r|\n|\r\n)$/, '');
+		return out;
 	};
 
 	if(typeof data === 'object' && data !== null) {
 		if (options && typeof options === 'object' && options.prefix) {
-			pattern = new RegExp('(\\[\\s*(~|\\^|\\!|#)'+rxquote(String(options.prefix))+'[\\.\\-\\_]([\\w\\.\\-\\_]+)\\s*\\])([\\s\\S]*?)(\\[\\s*\\/'+rxquote(String(options.prefix))+'[\\.\\-\\_]\\3\\s*\\])', 'mg');
+			pattern = new RegExp('(\\[\\s*(~|\\^|\\!|#)'+rxquote(String(options.prefix))+'[\\.\\-\\_]([\\w\\.\\-\\_]+)\\s*\\])(\\s?)([\\s\\S]*?)(\\[\\s*\\/'+rxquote(String(options.prefix))+'[\\.\\-\\_]\\3\\s*\\]\\s?)', 'mg');
 		} else {
-			pattern = new RegExp('(\\[\\s*(~|\\^|\\!|#)([\\w\\.\\-\\_]+)\\s*\\])([\\s\\S]*?)(\\[\\s*\\/\\3\\s*\\])', 'mg');
+			pattern = new RegExp('(\\[\\s*(~|\\^|\\!|#)([\\w\\.\\-\\_]+)\\s*\\])(\\s?)([\\s\\S]*?)(\\[\\s*\\/\\3\\s*\\]\\4?)', 'mg');
 		}
 		textString = textString.replace(pattern, replacer);
 	}
