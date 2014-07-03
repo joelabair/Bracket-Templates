@@ -70,13 +70,13 @@ Whitespace inside tag brackets is generally ignored, but preserved inside the co
 
 ###Examples:
 =================
-A basic template with some default text.
+**A basic template with some default text.**
 ```text
 [ name : Joe Somebody ]
 [ address ]
 [ phone ]
 ```
-*Code:*
+**Code:**
 ```js
 var bracket = require('bracket-templates');
 var template = fs.readFileSync('./template.txt');
@@ -89,11 +89,11 @@ console.log( bracket.render( String(template), data ) );
 ```
 
 =================
-A templalte using the optional prefix 'object'.
+**A templalte using the optional prefix 'object'.**
 ```text
 Hello [ object-name ]
 ```
-*Code:*
+**Code:**
 ```js
 var bracket = require('bracket-templates');
 var template = fs.readFileSync('./template.txt');
@@ -104,11 +104,11 @@ console.log( bracket.render( String(template), data, {prefix: 'object'} ) );
 ```
 
 =================
-A template using dot based sub-key notation (alternately, hyphens and underscores are supported)
+**A template using dot based sub-key notation (alternately, hyphens and underscores are supported)**
 ```
 Hello [ company.employees.0.name : mindless worker ].
 ```
-*Code:*
+**Code:**
 ```js
 var bracket = require('bracket-templates');
 var template = fs.readFileSync('./template.txt');
@@ -123,14 +123,14 @@ console.log( bracket.render( String(template), data ) );
 ```
 
 =================
-An iterator block using sub-key notation.
+**An iterator block using sub-key notation.**
 ```
 Employees: 
 [ #company.employees ]
   name: [ name ]
 [ /company.employees ]
 ```
-*Code:*
+**Code:**
 ```js
 var bracket = require('bracket-templates');
 var template = fs.readFileSync('./template.txt');
@@ -147,13 +147,13 @@ console.log( bracket.render( String(template), data ) );
 ```
 
 =================
-An object iterator using specials.
+**An object iterator using specials.**
 ```
 [ #properties ]
   [ KEY ]: [ VALUE ]
 [ /properties ]
 ```
-*Code:*
+**Code:**
 ```js
 var bracket = require('bracket-templates');
 var template = fs.readFileSync('./template.txt');
@@ -167,13 +167,13 @@ console.log( bracket.render( String(template), data ) );
 ```
 
 =================
-A truthy conditional block.
+**A truthy conditional block.**
 ```
 [ ~taxable ]
   Please cut off your leg.
 [ /taxable ]
 ```
-*Code:*
+**Code:**
 ```js
 var bracket = require('bracket-templates');
 var template = fs.readFileSync('./template.txt');
@@ -184,7 +184,7 @@ console.log( bracket.render( String(template), data ) );
 ```
 
 =================
-A falsy conditional block.
+**A falsy conditional block.**
 ```
 [ ^taxable ]
   Aren't you lucky!
@@ -195,7 +195,7 @@ or
 You are [ !taxable ] not [ /taxable ] taxable.
 
 ```
-*Code:*
+**Code:**
 ```js
 var bracket = require('bracket-templates');
 var template = fs.readFileSync('./template.txt');
@@ -204,13 +204,13 @@ console.log( bracket.render( String(template), data ) );
 ```
 
 =================
-A truthy conditional iterator block.
+**A truthy conditional iterator block.**
 ```
 [ #taxable ]
   You owe [ taxRate : 100% ] of your income. 
 [ /taxable ]
 ```
-*Code:*
+**Code:**
 ```js
 var bracket = require('bracket-templates');
 var template = fs.readFileSync('./template.txt');
@@ -223,13 +223,13 @@ console.log( bracket.render( String(template), data ) );
 ```
 
 =================
-Escaping some literal bracket text.
+**Escaping some literal bracket text.**
 ```
 Example: \[ someName ] would render [ someName ]
 
 Allternately \[ someName \] will render [ someName ] 
 ```
-*Code:*
+**Code:**
 ```js
 var bracket = require('bracket-templates');
 var template = fs.readFileSync('./template.txt');
@@ -241,3 +241,4 @@ console.log( bracket.render( String(template), data ) );
 
 
 _Please report any issues_
+
