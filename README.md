@@ -10,7 +10,7 @@ Template placeholders are enclosed by square brackets (obviously), and represent
 
 **[** {propertyName} [: {defaultValue}] **]**
 
-Special placeholder names:
+###Special placeholder names:
 * KEY/INDEX - the current property name or index in a iterator.  In a logical block this is the logical key name.
 * VALUE - The current property or item value in an iterator. In a logical block this is the boolean value.
 
@@ -90,8 +90,20 @@ Example: \[ someName ] would render [ VALUE ]
 Allternately \[ someName \] will render [ VALUE ] 
 ```
 
-###Iterator Blocks
-Iterators begin 
+###Block Constructs
+Blocks begin with an opening tag and end with a closing tag, and may span multiple lines.  Opening block tags must contain on of the following prefixes preceeding the {propertyName}.
+* # (iterator block) 
+  * If the propertyName represents an object or array, repeat the block with the value of each element.  Otherwise, repeat the block with the full object.
+
+* ~ (truthy block)
+  * Render the block if the propertyName exists and is truthy.
+
+* ^ (falsy block)
+  * Render the block if the propertyName does not exists or is falsy.
+  
+* ! (falsy bock)
+  * Render the block if the propertyName does not exists or is falsy.
+
 
 ###Options:
 Object.options 
