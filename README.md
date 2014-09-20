@@ -1,7 +1,7 @@
 Bracket-Templates
 =================
 
-A mimimal JavaScript template engine inspired by [mustache](http://mustache.github.io/mustache.5.html) using square brackets, supporting default strings, sub-key notation, block iterators and truthy conditional logic.   
+A mimimal JavaScript template engine inspired by [mustache](http://mustache.github.io/mustache.5.html) using square brackets, supporting default strings, sub-key notation, block iterators and truthy conditional logic.
 
 ###Instlation
 ```
@@ -12,8 +12,9 @@ $ npm install bracket-templates
 ```js
 var bracket = require('bracket-templates');
 bracket.options = {
-  prefix: '',   // (default = none), an optional placeholder prefix string.
-  debug: false  // (default = false), enable debug messages on the console.
+  prefix: '',   			// (default = none), an optional placeholder prefix string.
+  debug: false  	// (default = false), enable debug messages on the console.
+  strictKeys: false	// (default = false), when true, only mutate found keys - partial rendering.
 };
 ```
 
@@ -27,12 +28,12 @@ bracket.render(template, dataObj[, options, callback])
  * callback - A callback function.
 
 ###Template Tag Syntax: [ {propertyName} [: {defaultValue}] ]
-Template placeholders are enclosed by square brackets (obviously), and represent data object property names and/or any nested key identifiers (via dot, hyphen, or undersocre  notation). Optionally, a default value can be included by adding a colon followed by the default string.  Tempalte placeholders support both truthy conditional blocks and list/dict iterator blocks. Additionally, tempalte placeholders may contain an optional prefix.   
+Template placeholders are enclosed by square brackets (obviously), and represent data object property names and/or any nested key identifiers (via dot, hyphen, or undersocre  notation). Optionally, a default value can be included by adding a colon followed by the default string.  Tempalte placeholders support both truthy conditional blocks and list/dict iterator blocks. Additionally, tempalte placeholders may contain an optional prefix.
 
 
 ###Block Constructs: [ [\#, ~, ^, !]{propertyName} ]
 Blocks begin with an opening tag and end with a closing tag, and may span multiple lines.  Opening block tags must contain one of the following prefixes preceeding the {propertyName}.
-* \# (iterator block) 
+* \# (iterator block)
   * If the propertyName represents an object or array, repeat the block with the value of each element.  Otherwise, repeat the block with the full object.
 
 * ~ (truthy block)
@@ -40,7 +41,7 @@ Blocks begin with an opening tag and end with a closing tag, and may span multip
 
 * ^ (falsy block)
   * Render the block if the propertyName does not exists or is falsy.
-  
+
 * ! (falsy bock)
   * Render the block if the propertyName does not exists or is falsy.
 
@@ -131,7 +132,7 @@ console.log( bracket.render( String(template), data ) );
 
 **An iterator block using sub-key notation.**
 ```
-Employees: 
+Employees:
 [ #company.employees ]
   name: [ name ]
 [ /company.employees ]
@@ -221,7 +222,7 @@ console.log( bracket.render( String(template), data ) );
 **A truthy conditional iterator block.**
 ```
 [ #taxable ]
-  You owe [ taxRate : 100% ] of your income. 
+  You owe [ taxRate : 100% ] of your income.
 [ /taxable ]
 ```
 **Code:**
@@ -243,7 +244,7 @@ console.log( bracket.render( String(template), data ) );
 ```
 Example: \[ someName ] would render [ someName ]
 
-Allternately \[ someName \] will render [ someName ] 
+Allternately \[ someName \] will render [ someName ]
 ```
 **Code:**
 ```js
@@ -257,4 +258,3 @@ console.log( bracket.render( String(template), data ) );
 
 
 _Please report any issues_
-

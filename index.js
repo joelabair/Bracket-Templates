@@ -10,8 +10,9 @@ var rxquote = require("regexp-quote");
 
 
 var _defaults = {
-	debug:	false,	// warning messages
-	prefix:	"" 		// any string placeholder prefix (i.e. "object")
+	strictKeys: false,	// only mutate provided keys
+	debug:	false,		// warning messages
+	prefix:	""				// any string placeholder prefix (i.e. "object")
 };
 
 var _options = Object.create(_defaults);
@@ -111,6 +112,12 @@ var processBlocks = function processBlocks(textString, options, data) {
 
 		dataValue = _extract(key, data);
 
+		if (options && typeof options === 'object' && options.strictKeys) {
+			if(Number.isNaN(dataValue)) {
+				return match;
+			}
+		}
+
 		var obj = {}, proto = {}, KEY;
 		if (typeof dataValue === 'object' && type === '#') {
 			for(KEY in dataValue) {
@@ -166,8 +173,7 @@ var processBlocks = function processBlocks(textString, options, data) {
 var renderData = function renderData(textString, options, data) {
 
 	var replacer = function replacer(match, $1, $2) {
-		var pattern,
-			dataValue,
+		var extracted, pattern, dataValue,
 			key = String($1 || '').trim(),
 			defaultValue = String($2 || '').trim();
 
@@ -176,9 +182,15 @@ var renderData = function renderData(textString, options, data) {
 			return match.substr(1);
 		}
 
-		dataValue = _extract(key, data);
+		if (options && typeof options === 'object' && options.strictKeys) {
+			extracted = _extract(key, data);
+			dataValue = !Number.isNaN(extracted) ? extracted : match;
+		} else {
+			extracted = _extract(key, data);
+			dataValue = !Number.isNaN(extracted) ? extracted : defaultValue;
+		}
 
-		return !Number.isNaN(dataValue) ? dataValue : defaultValue;
+		return dataValue;
 	};
 
 	if(typeof data === 'object'  && data !== null) {

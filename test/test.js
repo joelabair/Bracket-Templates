@@ -195,4 +195,19 @@ describe('Bracket Template:', function(){
 		expect(string).to.be.a('string');
 		expect(string).to.equal('foo-bracket bracket bar-bracket');
 	});
+
+	it('renders using strict keys', function(){
+		var string = "[ person.name : default ] template-string [ place.name : default ]";
+		var data = {
+			place: {
+				name: "bracket"
+			}
+		};
+
+		string = bTemplate.render(string, data, {strictKeys: true});
+
+		should.exist(string);
+		expect(string).to.be.a('string');
+		expect(string).to.equal('[ person.name : default ] template-string bracket');
+	});
 });
