@@ -1,0 +1,16 @@
+
+--- BEGIN ITERATORS TEST ---
+
+[ #records ]
+    Record: [ KEY ]
+    [ #records.[ KEY ] ]
+    [ KEY ]: [ VALUE ]
+    [ /records.[ KEY ] ]
+
+    [ #records.[ KEY ] ]
+    [ KEY ]: [ VALUE ]
+    [ /records.[ KEY ] ]
+
+[ /records ]
+
+--- END ITERATORS TEST ---

@@ -1,0 +1,19 @@
+
+--- BEGIN ITERATORS TEST ---
+
+    Record: testA
+        name: one
+        type: thing
+    
+        name: one
+        type: thing
+    
+    Record: testB
+        name: two
+        type: unthing
+    
+        name: two
+        type: unthing
+    
+
+--- END ITERATORS TEST ---
