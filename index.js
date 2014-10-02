@@ -102,13 +102,13 @@ var _extract = function _extract(keyStr, dataObj) {
  */
 var processBlocks = function processBlocks(textString, options, data) {
 
-	var replacer = function replacer(match, $1, $2, $3, $4, $5) {
+	var replacer = function replacer(match, $1, $2, $3, $4, $5, $6, offset, input) {
 		var out = '',
-			pattern,
 			dataValue,
 			type = String($2),
 			key = String($3 || '').trim(),
-			blockText = String($5);//.replace(/(^\s|\s$)/g, '');
+			blockText = String($5),
+			nestedBlocks;
 
 		dataValue = _extract(key, data);
 
@@ -116,6 +116,16 @@ var processBlocks = function processBlocks(textString, options, data) {
 			if(Number.isNaN(dataValue)) {
 				return match;
 			}
+		}
+
+		nestedBlocks = blockText.match(pattern);
+		if (nestedBlocks) {
+			blockText = blockText.replace(pattern, function(match, $1, $2, $3, $4, $5, $6, offset, input) {
+				var index = match.indexOf($5);
+				var length = $5.length;
+				var body = $5.replace(/(?:\\*)\[(.+?)(?:\\*)\]/g, "\\[$1]");
+				return match.substr(0, index) + body + match.substr(index + length);
+			});
 		}
 
 		var obj = {}, proto = {}, KEY;
@@ -129,7 +139,10 @@ var processBlocks = function processBlocks(textString, options, data) {
 					obj = dataValue[KEY];
 					obj.__proto__ = proto;
 				}
-				out += renderData(blockText, false, obj);
+				out += renderData(blockText, options, obj, Boolean(options.prefix));
+			}
+			if (nestedBlocks) {
+				out = processBlocks(out, options, data);
 			}
 		} else if (dataValue && (type === '~' || type === '#')) {
 			// block logical truthy
@@ -137,23 +150,31 @@ var processBlocks = function processBlocks(textString, options, data) {
 			proto.VALUE = Boolean(dataValue);
 			obj = data;
 			obj.__proto__ = proto;
-			out += renderData(blockText, false, obj);
+
+			out += renderData(blockText, options, obj, Boolean(options.prefix));
+			if (nestedBlocks) {
+				out = processBlocks(out, options, data);
+			}
 		} else if (!dataValue && (type === '^' || type === '!')) {
 			// block logical falsy
 			proto.KEY = proto.INDEX = key;
 			proto.VALUE = Boolean(dataValue);
 			obj = data;
 			obj.__proto__ = proto;
-			out += renderData(blockText, false, obj);
+
+			out += renderData(blockText, options, obj, Boolean(options.prefix));
+			if (nestedBlocks) {
+				out = processBlocks(out, options, data);
+			}
 		}
 		return out;
 	};
 
+	var pattern = new RegExp('(\\[\\s*(~|\\^|\\!|#)([^\\r\\n]+)\\s*\\])([\\s]?)([\\s\\S]*?)(\\[\\s*\\/\\3\\s*\\]\\4?)', 'mg');
+
 	if(typeof data === 'object' && data !== null) {
 		if (options && typeof options === 'object' && options.prefix) {
-			pattern = new RegExp('(\\[\\s*(~|\\^|\\!|#)'+rxquote(String(options.prefix))+'[\\.\\-\\_]([\\w\\.\\-\\_]+)\\s*\\])(\\s?)([\\s\\S]*?)(\\[\\s*\\/'+rxquote(String(options.prefix))+'[\\.\\-\\_]\\3\\s*\\]\\s?)', 'mg');
-		} else {
-			pattern = new RegExp('(\\[\\s*(~|\\^|\\!|#)([\\w\\.\\-\\_]+)\\s*\\])(\\s?)([\\s\\S]*?)(\\[\\s*\\/\\3\\s*\\]\\4?)', 'mg');
+			pattern = new RegExp('(\\[\\s*(~|\\^|\\!|#)'+rxquote(String(options.prefix))+'[\\.\\-\\_]([^\\r\\n]+)\\s*\\])(\\s?)([\\s\\S]*?)(\\[\\s*\\/'+rxquote(String(options.prefix))+'[\\.\\-\\_]\\3\\s*\\]\\4?)', 'mg');
 		}
 		textString = textString.replace(pattern, replacer);
 	}
@@ -168,12 +189,14 @@ var processBlocks = function processBlocks(textString, options, data) {
  *  @param {String} 	textString 	The template string.
  *  @param {Object} 	options 		The current options config.
  *  @param {Object} 	data 			The source keys and values as an object.
+ *  @param {Bool}		doSpecials 	Optional - render plain special keys [KEY, INDEX, VALUE]
  *  @returns {String}
  */
-var renderData = function renderData(textString, options, data) {
+var renderData = function renderData(textString, options, data, doSpecials) {
 
 	var replacer = function replacer(match, $1, $2) {
-		var extracted, pattern, dataValue,
+		var extracted,
+			dataValue,
 			key = String($1 || '').trim(),
 			defaultValue = String($2 || '').trim();
 
@@ -193,18 +216,23 @@ var renderData = function renderData(textString, options, data) {
 		return dataValue;
 	};
 
+	var pattern = new RegExp('\\\\?\\[(?:\\s*([\\w\\-\\.]+)\\s*)(?:\\:([^\\[\\]]+))?\\]', 'g');
+	var spPattern = new RegExp('\\\\?\\[(?:\\s*(KEY|INDEX|VALUE)\\s*)(?:\\:([^\\[\\]]+))?\\]', 'g');
+
 	if(typeof data === 'object'  && data !== null) {
 		if (options && typeof options === 'object' && options.prefix) {
 			pattern = new RegExp('\\\\?\\[(?:\\s*'+rxquote(String(options.prefix))+'[\\.\\-\\_]([\\w\\-\\.]+)\\s*)(?:\\:([^\\[\\]]+))?\\]', 'g');
-		} else {
-			pattern = new RegExp('\\\\?\\[(?:\\s*([\\w\\-\\.]+)\\s*)(?:\\:([^\\[\\]]+))?\\]', 'g');
+		}
+		if (doSpecials) {
+			textString = textString.replace(spPattern, replacer);
 		}
 		textString = textString.replace(pattern, replacer);
 	} else {
 		throw new Error('No data to render!');
 	}
 
-	return textString;
+	// clean any uncaught bracket-escape sequences
+	return textString.replace(/(?:\\+)\[(.+)(?:\\+)\]/g, "[$1]").replace(/(?:\\+)\[(.+)(?:\\*)\]/g, "[$1]");
 };
 
 
@@ -254,8 +282,6 @@ exports.render = function render(content, dataObj, options, callback) {
 		try {
 			textString = processBlocks(textString, options, dataObj);
 			textString = renderData(textString, options, dataObj);
-			// clean any uncaught bracket-escape sequences
-			textString = textString.replace(/\\\[(.*?)\\?\]/g, "[$1]");
 		} catch (err) {
 			if (options && typeof options === 'object' && options.debug) console.warn(err);
 		}
