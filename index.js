@@ -55,7 +55,6 @@ var _extract = function _extract(keyStr, dataObj) {
 		keyNotation = keyStr.split(/[\-\_\.]/);
 
 	if (dataObj && typeof dataObj === 'object') {
-
 		dataValue = Object.create(dataObj)
 
 		if (keyStr in dataValue) {
@@ -85,7 +84,6 @@ var _extract = function _extract(keyStr, dataObj) {
 				_found = true;
 			}
 		}
-
 	}
 
 	return _found ? dataValue : NaN;
@@ -212,8 +210,12 @@ var renderData = function renderData(textString, options, data, doSpecials) {
 			extracted = _extract(key, data);
 			dataValue = !Number.isNaN(extracted) ? extracted : defaultValue;
 		}
-
-		return dataValue;
+		if (defaultValue) {
+			if (null === dataValue || typeof dataValue === 'object' || typeof dataValue === 'function' ) {
+				dataValue = '';
+			}
+		}
+		return String(dataValue) || String(defaultValue);
 	};
 
 	var pattern = new RegExp('\\\\?\\[(?:\\s*([\\w\\-\\.]+)\\s*)(?:\\:([^\\[\\]]+))?\\]', 'g');

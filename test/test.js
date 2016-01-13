@@ -64,6 +64,89 @@ describe('Bracket Template:', function(){
 		expect(string).to.equal('default template-string');
 	});
 
+	it('renders default text when the key is an empty string', function(){
+		var string = "[ name : default ] template-string";
+		var data = {
+			name: ''
+		};
+
+		string = bTemplate.render(string, data);
+
+		should.exist(string);
+		expect(string).to.be.a('string');
+		expect(string).to.equal('default template-string');
+	});
+
+	it('renders default text when the key is null', function(){
+		var string = "[ name : default ] template-string";
+		var data = {
+			name: null
+		};
+
+		string = bTemplate.render(string, data);
+
+		should.exist(string);
+		expect(string).to.be.a('string');
+		expect(string).to.equal('default template-string');
+	});
+
+	it('renders the value when the key is null and there is no default text', function(){
+		var string = "[ name ] template-string";
+		var data = {
+			name: null,
+		};
+
+		string = bTemplate.render(string, data);
+
+		should.exist(string);
+		expect(string).to.be.a('string');
+		expect(string).to.equal(data.name + ' template-string');
+	});
+
+	it('renders the value when there is no default and the key is an empty string', function(){
+		var string = "[ name ] template-string";
+		var data = {
+			name: ''
+		};
+
+		string = bTemplate.render(string, data);
+
+		should.exist(string);
+		expect(string).to.be.a('string');
+		expect(string).to.equal(' template-string');
+	});
+
+	it('renders the value when the key is numeric', function(){
+		var string = "[ name : default ] template-string";
+		var data = {
+			name: 0,
+		};
+
+		string = bTemplate.render(string, data);
+
+		should.exist(string);
+		expect(string).to.be.a('string');
+		expect(string).to.equal(data.name + ' template-string');
+
+		string = "[ name : default ] template-string";
+		data.name--;
+
+		string = bTemplate.render(string, data);
+
+		should.exist(string);
+		expect(string).to.be.a('string');
+		expect(string).to.equal(data.name + ' template-string');
+
+		string = "[ name : default ] template-string";
+		data.name = 0.5;
+
+		string = bTemplate.render(string, data);
+
+		should.exist(string);
+		expect(string).to.be.a('string');
+		expect(string).to.equal(data.name + ' template-string');
+	});
+
 	it('can use a buffer as source', function() {
 		var buffer = new Buffer("[ name : default ] template-buffer");
 		var data = {
@@ -95,58 +178,6 @@ describe('Bracket Template:', function(){
 		should.exist(buffer);
 		expect(buffer).to.be.instanceof(Buffer);
 
-		expect(String(buffer)).to.equal(String(finalBuff));
-
-	});
-
-	it('renders blocks in a template file', function() {
-		var finalBuff = fs.readFileSync(__dirname + '/blocks.expect');
-		var buffer = fs.readFileSync(__dirname + '/blocks.template');
-		var data = {
-			firstName: "Davey Jones",
-			things: {
-				pet: "a lamb",
-				car: "porsche",
-				3: "a hat"
-			}
-		};
-
-		buffer = bTemplate.render(buffer, data, {prefix: null});
-
-		should.exist(buffer);
-		expect(buffer).to.be.instanceof(Buffer);
-
-		expect(String(buffer)).to.equal(String(finalBuff));
-
-		data.things = ['cow', 'tree', 'cloud', 46];
-		buffer = fs.readFileSync(__dirname + '/blocks.template');
-		finalBuff = fs.readFileSync(__dirname + '/blocks.expect.array');
-
-		buffer = bTemplate.render(buffer, data, {prefix: null});
-		expect(String(buffer)).to.equal(String(finalBuff));
-
-		data.users = [{
-			name: 'joel bair',
-			age: 39,
-			sex: 'male'
-		}, {
-			name: 'barack obamma',
-			age: 59,
-			sex: 'male'
-		},{
-			name: 'megan fox',
-			age: 25,
-			sex: 'please!'
-		}];
-
-		data.person = {
-			firstName: data.firstName
-		};
-
-		buffer = fs.readFileSync(__dirname + '/blocks.complex.template');
-		finalBuff = fs.readFileSync(__dirname + '/blocks.complex.expect');
-
-		buffer = bTemplate.render(String(buffer), data, {prefix: null});
 		expect(String(buffer)).to.equal(String(finalBuff));
 
 	});
@@ -210,4 +241,5 @@ describe('Bracket Template:', function(){
 		expect(string).to.be.a('string');
 		expect(string).to.equal('[ person.name : default ] template-string bracket');
 	});
+
 });
