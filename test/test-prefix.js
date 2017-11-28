@@ -142,7 +142,7 @@ describe('Bracket Template (w/ prefix):', function(){
 
 
 	it('renders multiple complex sub-key text', function(){
-		var string = "[ object.foo.bar ] [ object-name ] [ object_stack_bar_baz ]";
+		var string = "[ object.foo.bar ] [ object-name ] [ object_stack_bar_baz ] [ object.links.monkey-wrench ] [ object_1-2-3.the ]";
 		var data = {
 			test: {
 				name: "bracket",
@@ -153,6 +153,12 @@ describe('Bracket Template (w/ prefix):', function(){
 					bar: {
 						baz: 'bar-bracket'
 					}
+				},
+				links: {
+					'monkey-wrench': 'its a gorilla'
+				},
+				"1-2-3": {
+					the: "thing"
 				}
 			}
 		};
@@ -161,13 +167,8 @@ describe('Bracket Template (w/ prefix):', function(){
 
 		should.exist(string);
 		expect(string).to.be.a('string');
-		expect(string).to.equal('foo-bracket bracket bar-bracket');
+		expect(string).to.equal('foo-bracket bracket bar-bracket its a gorilla thing');
 
-		string = bTemplate.render(string, data.test);
-
-		should.exist(string);
-		expect(string).to.be.a('string');
-		expect(string).to.equal('foo-bracket bracket bar-bracket');
 	});
 
 });

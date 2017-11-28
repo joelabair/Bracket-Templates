@@ -50,30 +50,36 @@ Object.defineProperty(module.exports, 'options', {
 var _extract = function _extract(keyStr, dataObj) {
 	var altkey,
 		_subKey,
+		_splitPoint,
 		_found = false,
 		dataValue = null,
-		keyNotation = keyStr.split(/[\-\_\.]/);
+		_queryParts = [];
 
 	if (dataObj && typeof dataObj === 'object') {
-		dataValue = Object.create(dataObj)
+		dataValue = Object.create(dataObj);
+		_queryParts = keyStr.split(/[\-\_\.]/);
 
+		//console.warn("INIT:", keyStr, _queryParts);
+
+		// test whole query first
 		if (keyStr in dataValue) {
 			dataValue = dataValue[keyStr];
-			keyNotation.length = 0;
+			_queryParts.length = 0;
 			_found = true;
 		}
 
-		while(keyNotation.length) {
-			_subKey = keyNotation.shift();
+		// search from smallest to largest possible keys
+ 		while(_queryParts.length) {
+			_splitPoint = _queryParts.shift();
+			_subKey = keyStr.split(new RegExp('('+_splitPoint+')')).slice(0,2).join("");
 			if (_subKey in dataValue) {
 				dataValue = dataValue[_subKey];
+				keyStr = keyStr.split(new RegExp('('+_subKey+'[\-\_\.])')).slice(2).join("");
 				_found = true;
 			} else {
-				// bail on any level miss
-				dataValue = null;
-				keyNotation.length = 0;
 				_found = false;
 			}
+			//console.warn(_found, _subKey, dataValue);
 		}
 
 		if (!_found) {

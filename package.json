@@ -1,6 +1,6 @@
 {
   "name": "bracket-templates",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "description": "Minimal javascript templating using square brackets.",
   "main": "index.js",
   "scripts": {
